@@ -33,18 +33,18 @@ PowerShell (путь к Unity.exe подставьте под свою верс�
 
 ## Ход работы (кратко)
 
-1. **Шаг 1.** Создан проект на базе шаблона 2D Platformer Microgame, сцена добавлена в Build Settings. — *[ВСТАВИТЬ СКРИНШОТ: окно Build Settings со сценой]*
-2. **Шаг 2.** Создана папка `Assets/Editor/` и скрипт `BuildManager.cs` с методом `BuildWebGL()`. — *[ВСТАВИТЬ СКРИНШОТ: код скрипта в IDE]*
-3. **Шаг 3.** В Publishing Settings отключено сжатие WebGL (Gzip → Disabled). — *[ВСТАВИТЬ СКРИНШОТ: Project Settings → Player → Publishing Settings]*
-4. **Шаг 4.** Скрипт скомпилирован без ошибок. — *[ВСТАВИТЬ СКРИНШОТ: Console без ошибок]*
-5. **Шаг 5.** Сборка запущена из терминала командой `-batchmode -nographics -executeMethod BuildManager.BuildWebGL -quit -logFile build_webgl.log`. — *[ВСТАВИТЬ СКРИНШОТ: терминал с командой]*
-6. **Шаг 6.** Лог сборки проанализирован: `[CI/CD] УСПЕХ! WebGL билд успешно создан.`, время и размер сборки зафиксированы. — *[ВСТАВИТЬ СКРИНШОТ: конец build_webgl.log]*
-7. **Шаг 7.** Игра запущена через Live Server, загрузка и управление работают. — *[ВСТАВИТЬ СКРИНШОТ: игра в браузере]*
-8. **Шаг 8.** Инициализирован Git, создан `.gitignore`, базовый коммит в `main`, скрипт сборщика закоммичен в ветке `LR1` и отправлен на GitHub. — *[ВСТАВИТЬ СКРИНШОТ: git log / страница GitHub]*
-9. **Шаг 9.** Создан Pull Request `LR1 → main`, получены аппрувы двух рецензентов, PR слит. — *[ВСТАВИТЬ СКРИНШОТ: Merge pull request]*
+1. **Шаг 1.** Создан проект на базе шаблона 2D Platformer Microgame, сцена добавлена в Build Settings.
+2. **Шаг 2.** Создана папка `Assets/Editor/` и скрипт `BuildManager.cs` с методом `BuildWebGL()`.
+3. **Шаг 3.** В Publishing Settings отключено сжатие WebGL (Gzip → Disabled).
+4. **Шаг 4.** Скрипт скомпилирован без ошибок.
+5. **Шаг 5.** Сборка запущена из терминала командой `-batchmode -nographics -executeMethod BuildManager.BuildWebGL -quit -logFile build_webgl.log`.
+6. **Шаг 6.** Лог сборки проанализирован: `[CI/CD] УСПЕХ! WebGL билд успешно создан.`, время и размер сборки зафиксированы.
+7. **Шаг 7.** Игра запущена через Live Server, загрузка и управление работают.
+8. **Шаг 8.** Инициализирован Git, создан `.gitignore`, базовый коммит в `main`, скрипт сборщика закоммичен в ветке `LR1` и отправлен на GitHub.
+9. **Шаг 9.** Создан Pull Request `LR1 → main`, получены аппрувы двух рецензентов, PR слит.
 
 ## История коммитов
 
 ```text
-[ВСТАВИТЬ ВЫВОД: git log --oneline --graph --all]
+git log --oneline --graph --all
 ```
