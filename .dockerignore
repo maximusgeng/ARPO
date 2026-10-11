@@ -1,0 +1,26 @@
+# Контекст сборки Docker-образа: исключаем всё, что не нужно образу
+# nginx (сам Dockerfile копирует только nginx.conf и Builds/WebGL).
+
+# Служебные папки Unity (гигабайты, в образ не нужны)
+Library/
+Temp/
+Obj/
+obj/
+Logs/
+UserSettings/
+MemoryCaptures/
+Recordings/
+
+# Среды разработки и VCS
+.vs/
+.vscode/
+.idea/
+.git/
+.gitignore
+.zcodeignore
+
+# Прочее
+*.log
+*.csproj
+*.slnx
+*.sln

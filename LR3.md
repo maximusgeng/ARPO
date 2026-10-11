@@ -13,6 +13,7 @@
 | `Builds/WebGL/Build/*.gz` | Пересобранная игра со сжатыми архивами |
 | `nginx.conf` | Кастомная конфигурация веб-сервера с заголовками `Content-Encoding: gzip` |
 | `Dockerfile` | Образ `nginx:alpine` + конфиг + сжатая игра |
+| `.dockerignore` | Исключения контекста сборки (`Library/`, `Temp/`, `Logs/` и т.п.) |
 | `.github/workflows/main.yml` | Новое задание `build_docker_image` — сборка и пуш образа в GHCR |
 
 ---
@@ -106,45 +107,46 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-## Шаг 4. Локальная проверка раздачи сжатых файлов
+## Шаг 4. Локальное тестирование контейнера
 
-Команды из методички (выполняются там, где установлен Docker):
+Сборка образа (в корне проекта):
 
 ```bash
 docker build -t platformer-compressed:v1 .
-docker run -d -p 8080:80 --name unity_compressed_container platformer-compressed:v1
-# ... проверка в браузере на http://localhost:8080 ...
-docker stop unity_compressed_container && docker rm unity_compressed_container
 ```
 
-> **Примечание.** На машине, где выполнялась работа, Docker не установлен, поэтому
-> контейнер локально не запускался. Вместо этого тот же `nginx.conf` был запущен
-> локальным веб-сервером Nginx, раздающим ту же самую папку `Builds/WebGL`, — это
-> позволяет проверить главное: отдачу заголовка `Content-Encoding: gzip`.
-> Сам Docker-образ собран и опубликован в облаке (шаг 5), что подтверждается
-> логом GitHub Actions и страницей пакета.
+Запуск контейнера в фоновом режиме с пробросом порта 8080:
 
-Проверка фактических заголовков ответа (`curl -I`):
+```bash
+docker run -d -p 8080:80 --name unity_compressed_container platformer-compressed:v1
+```
+
+Игра успешно открывается по адресу <http://localhost:8080>. В DevTools
+(F12 → вкладка **Network**) у запроса `Build/WebGL.wasm.gz` виден статус **200 OK**
+и заголовок **`Content-Encoding: gzip`**, а также `Content-Type: application/wasm`
+и `Server: nginx/1.31.6`:
+
+![DevTools, вкладка Network: Content-Encoding: gzip у WebGL.wasm.gz](docs/lr3/03-devtools-content-encoding.png)
+
+То же самое в виде текста (`curl -I` к запущенному контейнеру):
 
 ```text
 HTTP/1.1 200 OK
+Server: nginx/1.31.6
 Content-Type: application/wasm
+Content-Length: 10640485
 Content-Encoding: gzip        <-- /Build/WebGL.wasm.gz
-
-HTTP/1.1 200 OK
-Content-Type: application/octet-stream
-Content-Encoding: gzip        <-- /Build/WebGL.data.gz
-
-HTTP/1.1 200 OK
-Content-Type: application/javascript
-Content-Encoding: gzip        <-- /Build/WebGL.framework.js.gz
 ```
 
-Игра успешно загружается с локального сервера:
+Полный вывод по всем трём сжатым файлам (`WebGL.wasm.gz`, `WebGL.data.gz`,
+`WebGL.framework.js.gz`) — в
+[`docs/lr3/container-gzip-headers.txt`](docs/lr3/container-gzip-headers.txt).
 
-![Игра, отдаваемая локальным веб-сервером со сжатием gzip](docs/lr3/03-local-server-gzip.png)
+Остановка тестового контейнера:
 
-Полный вывод заголовков сохранён в [`docs/lr3/local-gzip-headers.txt`](docs/lr3/local-gzip-headers.txt).
+```bash
+docker stop unity_compressed_container && docker rm unity_compressed_container
+```
 
 ## Шаг 5. Модернизация пайплайна GitHub Actions (GHCR)
 

@@ -1,6 +1,10 @@
+# Заголовки ответа контейнера platformer-compressed:v1 (порт 8080)
+# Получены командой: curl -I http://localhost:8080/Build/<file>
+
+### /Build/WebGL.wasm.gz
 HTTP/1.1 200 OK
-Server: nginx/1.29.0
-Date: Sun, 11 Oct 2026 21:25:15 GMT
+Server: nginx/1.31.6
+Date: Sun, 11 Oct 2026 22:34:01 GMT
 Content-Type: application/wasm
 Content-Length: 10640485
 Last-Modified: Sun, 11 Oct 2026 20:59:05 GMT
@@ -9,9 +13,11 @@ ETag: "6acbf899-a25c65"
 Content-Encoding: gzip
 Accept-Ranges: bytes
 
+
+### /Build/WebGL.data.gz
 HTTP/1.1 200 OK
-Server: nginx/1.29.0
-Date: Sun, 11 Oct 2026 21:25:15 GMT
+Server: nginx/1.31.6
+Date: Sun, 11 Oct 2026 22:34:01 GMT
 Content-Type: application/octet-stream
 Content-Length: 8659620
 Last-Modified: Sun, 11 Oct 2026 20:59:07 GMT
@@ -20,9 +26,11 @@ ETag: "6acbf89b-8422a4"
 Content-Encoding: gzip
 Accept-Ranges: bytes
 
+
+### /Build/WebGL.framework.js.gz
 HTTP/1.1 200 OK
-Server: nginx/1.29.0
-Date: Sun, 11 Oct 2026 21:25:15 GMT
+Server: nginx/1.31.6
+Date: Sun, 11 Oct 2026 22:34:01 GMT
 Content-Type: application/javascript
 Content-Length: 83654
 Last-Modified: Sun, 11 Oct 2026 20:59:02 GMT
@@ -30,4 +38,5 @@ Connection: keep-alive
 ETag: "6acbf896-146c6"
 Content-Encoding: gzip
 Accept-Ranges: bytes
+
 
