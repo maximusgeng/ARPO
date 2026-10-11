@@ -20,6 +20,7 @@
 | `Assets/Editor/BuildManager.cs` | Скрипт автоматической сборки WebGL |
 | `nginx.conf` | Кастомная конфигурация Nginx (заголовки `Content-Encoding: gzip`) |
 | `Dockerfile` | Образ `nginx:alpine` со сжатой WebGL-сборкой |
+| `.dockerignore` | Исключения контекста сборки Docker |
 | `.github/workflows/main.yml` | Пайплайн CI/CD (Sanity Check + зеркалирование + сборка образа в GHCR) |
 | `docs/lr2/` | Скриншоты выполнения ЛР№2 |
 | `docs/lr3/` | Скриншоты выполнения ЛР№3 |
