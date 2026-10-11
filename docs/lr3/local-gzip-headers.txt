@@ -1,0 +1,33 @@
+HTTP/1.1 200 OK
+Server: nginx/1.29.0
+Date: Sun, 11 Oct 2026 21:25:15 GMT
+Content-Type: application/wasm
+Content-Length: 10640485
+Last-Modified: Sun, 11 Oct 2026 20:59:05 GMT
+Connection: keep-alive
+ETag: "6acbf899-a25c65"
+Content-Encoding: gzip
+Accept-Ranges: bytes
+
+HTTP/1.1 200 OK
+Server: nginx/1.29.0
+Date: Sun, 11 Oct 2026 21:25:15 GMT
+Content-Type: application/octet-stream
+Content-Length: 8659620
+Last-Modified: Sun, 11 Oct 2026 20:59:07 GMT
+Connection: keep-alive
+ETag: "6acbf89b-8422a4"
+Content-Encoding: gzip
+Accept-Ranges: bytes
+
+HTTP/1.1 200 OK
+Server: nginx/1.29.0
+Date: Sun, 11 Oct 2026 21:25:15 GMT
+Content-Type: application/javascript
+Content-Length: 83654
+Last-Modified: Sun, 11 Oct 2026 20:59:02 GMT
+Connection: keep-alive
+ETag: "6acbf896-146c6"
+Content-Encoding: gzip
+Accept-Ranges: bytes
+
