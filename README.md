@@ -15,6 +15,13 @@
 | GitHub Skills: Workflows | [Reusable Workflows](https://github.com/maximusgeng/skills-reusable-workflows) |
 | GitHub Skills: Artifacts | [Workflow Artifacts](https://github.com/maximusgeng/skills-workflow-artifacts) |
 | ЛР№4 | Автоматизация тестирования Unity в CI/CD | [LR4.md](LR4.md) |
+| ЛР№5 | Облачная сборка WebGL и публикация на GitHub Pages | [LR5.md](LR5.md) |
+
+## WebGL-сборка
+
+В ЛР №5 GitHub Actions запускает сборку WebGL после тестов Unity и передаёт один артефакт в GitHub Pages и Docker. Настройка, локальная проверка и статус облачного запуска описаны в [LR5.md](LR5.md).
+
+![Локальная WebGL-сборка в браузере](docs/lr5/gameplay.png)
 
 ## Структура репозитория
 
@@ -26,7 +33,7 @@
 | `nginx.conf` | Кастомная конфигурация Nginx (заголовки `Content-Encoding: gzip`) |
 | `Dockerfile` | Образ `nginx:alpine` со сжатой WebGL-сборкой |
 | `.dockerignore` | Исключения контекста сборки Docker |
-| `.github/workflows/main.yml` | Пайплайн CI/CD (Sanity Check, тесты Unity, зеркалирование и сборка образа в GHCR) |
+| `.github/workflows/main.yml` | Проверки Unity, сборка WebGL, публикация в GitHub Pages и GHCR, зеркалирование |
 | `docs/lr2/` | Скриншоты выполнения ЛР№2 |
 | `docs/lr3/` | Скриншоты выполнения ЛР№3 |
 | `Builds/WebGL/` | Выходная папка сборки (в git не попадает) |
