@@ -1,9 +1,11 @@
 # Название всего автоматического процесса
 name: Unity 2D Platformer CI/CD
 
-# Условие запуска: реагировать на любой push в главную ветку main
+# Проверка push и pull request для ветки main
 on:
   push:
+    branches: [ "main" ]
+  pull_request:
     branches: [ "main" ]
 
 jobs:
@@ -26,10 +28,112 @@ jobs:
           find Assets/ -name "*Controller.cs" -print
           find Assets/ -name "BuildManager.cs" -print
 
+  run_tests:
+    needs: sanity_check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Check Unity license secrets
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          for name in UNITY_LICENSE UNITY_EMAIL UNITY_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Missing repository secret: $name"
+              missing=1
+            fi
+          done
+          exit "${missing:-0}"
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Linux-6000.6.0f1-${{ hashFiles('Packages/packages-lock.json', 'Assets/**/*.asmdef') }}
+
+      - name: Install GameCI CLI
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl -fsSL --retry 3 -o game-ci.tar.gz https://github.com/game-ci/cli/releases/download/v0.1.72/game-ci-linux-x64.tar.gz
+          tar xzf game-ci.tar.gz ./game-ci
+          echo "$PWD" >> "$GITHUB_PATH"
+
+      - name: Run Unity tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        run: |
+          game-ci test --docker --dockerShmSize=1025m \
+            --engine=unity --testPlatforms='playmode;editmode;COMBINE_RESULTS' \
+            --engineVersion=6000.6.0f1 --coverageEnabled=false \
+            --artifactsPath=artifacts --dockerIsolationMode=default \
+            --containerRegistryRepository=unityci/editor \
+            --containerRegistryImageVersion=3
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: artifacts/
+
+  build_game:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache WebGL Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-WebGL-6000.6.0f1-${{ hashFiles('Packages/packages-lock.json', 'Assets/**/*.asmdef') }}
+
+      - name: Build WebGL Player
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: WebGL
+          unityVersion: 6000.6.0f1
+          buildMethod: BuildManager.BuildWebGL
+
+      - name: Verify WebGL output
+        run: |
+          test -s Builds/WebGL/index.html
+          for suffix in data framework.js wasm; do
+            for file in Builds/WebGL/Build/*."$suffix".unityweb; do
+              gzip -t "$file"
+            done
+          done
+
+      - name: Upload WebGL build
+        uses: actions/upload-artifact@v4
+        with:
+          name: WebGL-Build
+          path: Builds/WebGL
+          if-no-files-found: error
+
+
   # ЗАДАЧА 2: Автоматическое зеркалирование в резервный репозиторий
   mirror_repo:
-    needs: sanity_check # Начнется только после того, как успешно пройдет первая задача
-    if: github.repository == 'maximusgeng/ARPO' # Только в оригинальном репо, чтобы избежать цикла в backup
+    needs: run_tests
+    if: github.event_name == 'push' && github.repository == 'maximusgeng/ARPO'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout full history
@@ -59,7 +163,8 @@ jobs:
 
   # НОВЫЙ ЭТАП 3: Автоматическая сборка Docker-образа в облако
   build_docker_image:
-    needs: sanity_check
+    needs: build_game
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     # КРИТИЧЕСКИ ВАЖНЫЕ СТРОКИ: Разрешаем этой конкретной задаче публиковать пакеты
@@ -71,17 +176,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Compressed Placeholders for Docker
-        # Генерируем фейковые .gz файлы, чтобы шаг COPY в Dockerfile не упал без реального билда
-        run: |
-          mkdir -p Builds/WebGL/Build
-          if [ -z "$(ls -A Builds/WebGL/Build)" ]; then
-            echo "<h3>Unity 6 Compressed Game Cloud Layer</h3>" > Builds/WebGL/index.html
-            touch Builds/WebGL/Build/game.framework.js.gz
-            touch Builds/WebGL/Build/game.wasm.gz
-            touch Builds/WebGL/Build/game.data.gz
-            echo "Создана временная структура сжатых файлов для сборщика Docker."
-          fi
+      - name: Download WebGL build
+        uses: actions/download-artifact@v4
+        with:
+          name: WebGL-Build
+          path: Builds/WebGL
+
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -99,3 +199,33 @@ jobs:
           tags: |
             ghcr.io/maximusgeng/arpo:latest
             ghcr.io/maximusgeng/arpo:${{ github.sha }}
+
+  deploy_to_pages:
+    needs: build_game
+    if: github.event_name == 'push' && github.repository == 'maximusgeng/ARPO'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download WebGL build
+        uses: actions/download-artifact@v4
+        with:
+          name: WebGL-Build
+          path: Builds/WebGL
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: Builds/WebGL
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
