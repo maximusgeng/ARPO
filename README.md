@@ -11,6 +11,9 @@
 | ЛР№1 | Автоматизация сборки 2D-игры через командную строку (CLI) | [LR1.md](LR1.md) |
 | ЛР№2 | Настройка репозиториев на GitHub и Sanity Check в GitHub Actions | [LR2.md](LR2.md) |
 | ЛР№3 | Контейнеризация веб-сервера в Docker и раздача сжатых файлов со стороны Nginx | [LR3.md](LR3.md) |
+| GitHub Skills: Docker | [Publish Docker Images](https://github.com/maximusgeng/skills-publish-docker-images) |
+| GitHub Skills: Workflows | [Reusable Workflows](https://github.com/maximusgeng/skills-reusable-workflows) |
+| GitHub Skills: Artifacts | [Workflow Artifacts](https://github.com/maximusgeng/skills-workflow-artifacts) |
 | ЛР№4 | Автоматизация тестирования Unity в CI/CD | [LR4.md](LR4.md) |
 
 ## Структура репозитория
@@ -38,3 +41,4 @@
 | ЛР№3 | Hello GitHub Actions, Test with Actions, Write JavaScript Actions |
 
 Подробности — в соответствующих файлах [LR2.md](LR2.md) и [LR3.md](LR3.md).
+
