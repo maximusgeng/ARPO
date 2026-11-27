@@ -11,17 +11,29 @@
 | ЛР№1 | Автоматизация сборки 2D-игры через командную строку (CLI) | [LR1.md](LR1.md) |
 | ЛР№2 | Настройка репозиториев на GitHub и Sanity Check в GitHub Actions | [LR2.md](LR2.md) |
 | ЛР№3 | Контейнеризация веб-сервера в Docker и раздача сжатых файлов со стороны Nginx | [LR3.md](LR3.md) |
+| GitHub Skills: Docker | [Publish Docker Images](https://github.com/maximusgeng/skills-publish-docker-images) |
+| GitHub Skills: Workflows | [Reusable Workflows](https://github.com/maximusgeng/skills-reusable-workflows) |
+| GitHub Skills: Artifacts | [Workflow Artifacts](https://github.com/maximusgeng/skills-workflow-artifacts) |
+| ЛР№4 | Автоматизация тестирования Unity в CI/CD | [LR4.md](LR4.md) |
+| ЛР№5 | Облачная сборка WebGL и публикация на GitHub Pages | [LR5.md](LR5.md) |
+
+## WebGL-сборка
+
+В ЛР №5 GitHub Actions запускает сборку WebGL после тестов Unity и передаёт один артефакт в GitHub Pages и Docker. Настройка, локальная проверка и статус облачного запуска описаны в [LR5.md](LR5.md).
+
+![Локальная WebGL-сборка в браузере](docs/lr5/gameplay.png)
 
 ## Структура репозитория
 
 | Путь | Назначение |
 |---|---|
+| Assets/Tests/ | Тесты Unity EditMode и PlayMode |
 | `Assets/Scenes/` | Игровые сцены проекта |
 | `Assets/Editor/BuildManager.cs` | Скрипт автоматической сборки WebGL |
 | `nginx.conf` | Кастомная конфигурация Nginx (заголовки `Content-Encoding: gzip`) |
 | `Dockerfile` | Образ `nginx:alpine` со сжатой WebGL-сборкой |
 | `.dockerignore` | Исключения контекста сборки Docker |
-| `.github/workflows/main.yml` | Пайплайн CI/CD (Sanity Check + зеркалирование + сборка образа в GHCR) |
+| `.github/workflows/main.yml` | Проверки Unity, сборка WebGL, публикация в GitHub Pages и GHCR, зеркалирование |
 | `docs/lr2/` | Скриншоты выполнения ЛР№2 |
 | `docs/lr3/` | Скриншоты выполнения ЛР№3 |
 | `Builds/WebGL/` | Выходная папка сборки (в git не попадает) |
@@ -36,3 +48,4 @@
 | ЛР№3 | Hello GitHub Actions, Test with Actions, Write JavaScript Actions |
 
 Подробности — в соответствующих файлах [LR2.md](LR2.md) и [LR3.md](LR3.md).
+
