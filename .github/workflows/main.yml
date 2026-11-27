@@ -3,6 +3,8 @@ name: Unity 2D Platformer CI/CD
 
 # Проверка push и pull request для ветки main
 on:
+  # Ручной запуск полной цепочки из вкладки Actions
+  workflow_dispatch:
   push:
     branches: [ "main" ]
   pull_request:
@@ -164,7 +166,7 @@ jobs:
   # НОВЫЙ ЭТАП 3: Автоматическая сборка Docker-образа в облако
   build_docker_image:
     needs: build_game
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     # КРИТИЧЕСКИ ВАЖНЫЕ СТРОКИ: Разрешаем этой конкретной задаче публиковать пакеты
@@ -202,7 +204,7 @@ jobs:
 
   deploy_to_pages:
     needs: build_game
-    if: github.event_name == 'push' && github.repository == 'maximusgeng/ARPO'
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.repository == 'maximusgeng/ARPO'
     runs-on: ubuntu-latest
     permissions:
       contents: read
